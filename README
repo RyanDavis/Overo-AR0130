@@ -1,0 +1,94 @@
+Fork of http://github.com/Aptina/BeagleBoard-xM
+
+-----------------------------------------------------------------------
+|                                                                     |
+|Aptina AR0130 (1.2 megapixel bayer) image sensor linux driver release |
+|                                                                     |
+-----------------------------------------------------------------------
+    Release notes for the Aptina AR0130 image sensor linux driver.
+    This document contains information on how to download the OS, build
+    the driver/OS and how to use the sensor. Please read this document
+    before posting questions to the drivers@aptina.com e-mail address.
+
+
+AR0130 Driver
+--------------
+    The AR0130 driver is a Video for Linux 2 (V4L2) driver that is compiled
+    into the Overo Linux Angstrom distribution. It is distributed under
+    the GNU General Public License agreement which can be obtained from Free Software 
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA02139, USA. 
+
+
+TARGET HARDWARE/SOFTWARE
+------------------------
+    - Gumstix Overo.
+    - Linux Angstrom Distribution, kernel release 3.5.7.
+    - Aptina Beagleboard-xM Adapter/Revision 0 and AR0130 1.2-megapixel raw sensor.
+
+
+DRIVER SOURCE CODE FILES
+------------------------
+    Driver files and directory locations are listed below:
+    ar0130.c, ar0130_data.h, Makefile, and Kconfig are located at:
+        git/drivers/media/video
+
+    ar0130.h and v4l2-chip-ident.h are located at:
+        git/include/media
+
+    board-omap3beagle.c and board-omap3beagle-camera.c are located at:
+        git/arch/arm/mach-omap2
+
+
+LINUX KERNEL CONFIGURATION/COMPILATION
+--------------------------------------
+    Copy AR0130 related files into the kernel directories:
+        $cp your_ar0130_driver_directory/board-omap3beagle.c		./arch/arm/mach-omap2
+        $cp your_ar0130_driver_directory/board-omap3beagle-camera.c	./arch/arm/mach-omap2
+        $cp your_ar0130_driver_directory/ar0130.c			./drivers/media/video
+        $cp your_ar0130_driver_directory/ar0130_data.h			./drivers/media/video
+        $cp your_ar0130_driver_directory/Makefile			./drivers/media/video
+        $cp your_ar0130_driver_directory/Kconfig			./drivers/media/video
+        $cp your_ar0130_driver_directory/ar0130.h			./include/media
+        $cp your_ar0130_driver_directory/v4l2-chip-ident.h		./include/media
+
+    From Yocto enter the command:
+        bitbake -f -c menuconfig virtual/kernel 
+
+    In menuconfig, enable the AR0130 driver. The AR0130 driver configuration is at the
+    following location:
+        "Device Drivers"-->"Multimedia support"-->"Video capture adapters"-->"Encoders/decoders and other helper chips" 
+
+    Select "Aptina AR0130 support" as either
+        <*> Aptina AR0130 support
+    so that the driver is part of kernel image, or
+
+    Note: other image sensors (such as the MT9V011 or MT9P012) should be de-selected.
+
+    Compile the kernel:
+        bitbake -f -c compile virtual/kernel
+
+
+AR0130 SUPPORTED OUTPUT FRAME SIZES
+------------------------------------
+    width=640,  height=360
+    width=640,  height=480
+    width=1280, height=720
+    width=1280, height=960
+
+
+AR0130 SUPPORTED OUTPUT FRAME FORMATS
+--------------------------------------
+	SRGB
+
+
+LIMITATIONS
+-----------
+    Preview resolutions less than 640x360 are not supported.
+    AE is enabled by default. AWB and AF are not supported.
+
+
+KNOWN ISSUES
+------------
+    The debugging feature "SYSFS" is not enabled.
+    The default sensor setting support the Aptina camera adapter card (vs. the Leopard
+        Imaging adapter card)
